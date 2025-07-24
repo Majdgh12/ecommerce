@@ -1,10 +1,43 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import './index.css'
-import App from './App.jsx'
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
-createRoot(document.getElementById('root')).render(
-  <StrictMode>
-    <App />
-  </StrictMode>,
-)
+import './firebase/config.js';
+import './App.css';
+
+import { AuthProvider } from './context/AuthContext.jsx';
+import App from './App.jsx';
+import Layout from "./pages/Layout.jsx";
+import SignUp from './pages/SignUp.jsx';
+import SignIn from './pages/SignIn.jsx';
+
+const router = createBrowserRouter([
+    {
+        path: "/",
+        element: <App />, // HomePage
+    },
+    {
+        path: "/signup",
+        element: (
+            <Layout>
+                <SignUp />
+            </Layout>
+        ),
+    },
+    {
+        path: "/signin",
+        element: (
+            <Layout>
+                <SignIn />
+            </Layout>
+        ),
+    },
+]);
+
+ReactDOM.createRoot(document.getElementById('root')).render(
+    <React.StrictMode>
+        <AuthProvider>
+            <RouterProvider router={router}/>
+        </AuthProvider>
+    </React.StrictMode>
+);
