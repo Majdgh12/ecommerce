@@ -11,6 +11,8 @@ import Layout from "./pages/Layout.jsx";
 import SignUp from './pages/SignUp.jsx';
 import SignIn from './pages/SignIn.jsx';
 
+import Home from './pages/Home-page.jsx';
+
 const router = createBrowserRouter([
     {
         path: "/",
@@ -31,6 +33,10 @@ const router = createBrowserRouter([
                 <SignIn />
             </Layout>
         ),
+    },
+    {
+        path: "/home",
+        element: <Home/>, // HomePage
     },
 ]);
 
