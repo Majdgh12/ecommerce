@@ -1,4 +1,4 @@
-import amazonLogo from "../assets/Amazon.svg";
+import amazonLogo from "../assets/Amazon.png";
 
 const MainFooter = () => {
   return (
@@ -56,13 +56,7 @@ const MainFooter = () => {
 
       {/* Bottom */}
       <div className="bg-[#131A22] py-4 text-center text-xs text-gray-400">
-        <img src={amazonLogo} alt="Amazon" className="mx-auto mb-2 h-6" />
-        <button
-    onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-    className="text-white text-sm underline hover:text-yellow-400 block mb-2"
-  >
-    Back to Top
-  </button>
+        <img src={amazonLogo} alt="Amazon" className="mx-auto mb-2 h-10" />
         <p>Conditions of Use & Sale | Privacy Notice | Interest-Based Ads</p>
         <p>© 1996-2024, Amazon.com, Inc. or its affiliates</p>
       </div>

@@ -5,7 +5,7 @@ import Navbar from "../components/Navbar.jsx";
 const Layout = ({ children }) => {
   return (
     <div className="flex flex-col min-h-screen bg-white">
-      <Navbar /> {/* ✅ تمت إضافة النافبار هنا */}
+      <Navbar />
       <main className="flex-grow">{children}</main>
       <Footer />
     </div>

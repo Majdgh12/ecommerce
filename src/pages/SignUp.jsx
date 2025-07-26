@@ -6,6 +6,8 @@ import rectangle from '../assets/Rectangle.svg';
 import {Link, useNavigate} from 'react-router-dom';
 import {FIREBASE_AUTH, FIREBASE_DB} from "../firebase/config.js";
 import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { useDispatch } from 'react-redux';
+import { setUser, setLoading as setUserLoading, setError as setUserError } from '../redux/userSlice';
 
 const SignUp = () => {
     const [name, setName] = useState('');
@@ -14,6 +16,7 @@ const SignUp = () => {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     const handleSignUp = async (e) => {
         e.preventDefault();
@@ -26,25 +29,32 @@ const SignUp = () => {
 
         setLoading(true);
         setError('');
+        dispatch(setUserLoading());
 
         try {
             const userCredential = await createUserWithEmailAndPassword(FIREBASE_AUTH, `${mobile}@test.com`, password);
             const user = userCredential.user;
             console.log('Successfully signed up with Auth:', user);
-            await setDoc(doc(FIREBASE_DB, "users", user.uid), {
+            const userData = {
+                uid: user.uid,
                 name: name,
                 mobile: mobile,
                 email: user.email,
-                createdAt: serverTimestamp()
+            }
+            await setDoc(doc(FIREBASE_DB, "users", user.uid), {
+                ...userData,
+                createdAt: serverTimestamp(),
             });
 
             console.log('Successfully saved user data to Firestore.');
+            dispatch(setUser(userData));
             alert('Sign up successful!');
             navigate('/signin');
 
         } catch (error) {
             const errorCode = error.code;
             const errorMessage = error.message;
+            dispatch(setUserError(errorMessage));
             console.error("Firebase Error: ", errorCode, errorMessage);
             alert(`Error: ${errorMessage}`);
             setError(errorMessage);

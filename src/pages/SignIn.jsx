@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import amazonLogo from '../assets/Amazon.svg';
 import { Link, useNavigate } from 'react-router-dom';
-import { FIREBASE_AUTH } from "../firebase/config.js";
+import { FIREBASE_AUTH, FIREBASE_DB } from "../firebase/config.js";
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import arrow_grey from '../assets/arrow-grey.svg';
+import { useDispatch } from 'react-redux';
+import { setUser, setLoading as setUserLoading, setError as setUserError } from '../redux/userSlice';
+import { doc, getDoc } from 'firebase/firestore';
 
 const SignIn = () => {
   const [emailOrMobile, setEmailOrMobile] = useState('');
@@ -11,6 +14,7 @@ const SignIn = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleSignIn = async (e) => {
     e.preventDefault();
@@ -22,22 +26,38 @@ const SignIn = () => {
 
     setLoading(true);
     setError('');
+    dispatch(setUserLoading());
 
     let firebaseEmail = emailOrMobile.includes('@')
       ? emailOrMobile
       : `${emailOrMobile}@test.com`;
 
     try {
-      await signInWithEmailAndPassword(FIREBASE_AUTH, firebaseEmail, password);
-      console.log('✅ Successfully signed in!');
-      navigate('/home'); // ✅ يذهب مباشرة إلى صفحة Home
-    } catch (err) {
-      console.error("Firebase sign-in error:", err.code);
-      if (['auth/user-not-found', 'auth/wrong-password', 'auth/invalid-credential'].includes(err.code)) {
-        setError('Invalid credentials. Please check your email/mobile and password.');
+      const userCredential  = await signInWithEmailAndPassword(FIREBASE_AUTH, firebaseEmail, password);
+      const user = userCredential.user;
+      const userDocRef = doc(FIREBASE_DB, "users", user.uid);
+      const userDocSnap = await getDoc(userDocRef);
+      if (userDocSnap.exists()) {
+        const userData = userDocSnap.data();
+        dispatch(setUser({
+          uid: user.uid,
+          ...userData
+        }));
+        console.log('✅ Successfully signed in and updated Redux state!');
+        navigate('/home');
       } else {
-        setError('An error occurred during sign-in. Please try again.');
+        console.error("No user data found in Firestore for UID:", user.uid);
+        setError('User data not found. Please sign up first.');
+        dispatch(setUserError('User data not found. Please sign up first.'));
       }
+    } catch (err) {
+      console.error("Firebase sign-in error:", err.code, err.message);
+      let friendlyError = 'An error occurred during sign-in. Please try again.';
+      if (['auth/user-not-found', 'auth/wrong-password', 'auth/invalid-credential'].includes(err.code)) {
+        friendlyError = 'Invalid credentials. Please check your email/mobile and password.';
+      }
+      dispatch(setUserError(friendlyError));
+      setError(friendlyError);
     } finally {
       setLoading(false);
     }

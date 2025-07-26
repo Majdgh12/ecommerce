@@ -3,10 +3,29 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { FIREBASE_AUTH } from "../firebase/config";
 import { Menu, ShoppingCart } from "lucide-react";
-import amazonLogo from "../assets/Amazon.svg";
+import amazonLogo from "../assets/Amazon.png";
+import {useSelector} from "react-redux";
+import { useDispatch } from "react-redux";
+import { clearUser } from "../redux/userSlice";
+import { clearCart } from "../redux/cartSlice";
 
 const Navbar = () => {
   const { currentUser } = useAuth();
+  const cartItems = useSelector(state => state.cart.items);
+  const cartItemCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+  const dispatch = useDispatch();
+
+  const handleSignOut = () => {
+    FIREBASE_AUTH.signOut()
+      .then(() => {
+        console.log("User signed out successfully.");
+        dispatch(clearUser());
+        dispatch(clearCart());
+      })
+      .catch((error) => {
+        console.error("Error signing out: ", error);
+      });
+  }
 
   return (
     <div className="w-full">
@@ -33,7 +52,7 @@ const Navbar = () => {
             <>
               <span className="text-sm">Hello, {currentUser.name || "User"}</span>
               <button
-                onClick={() => FIREBASE_AUTH.signOut()}
+                onClick={handleSignOut}
                 className="bg-red-500 px-3 py-1 rounded text-white hover:bg-red-600"
               >
                 Logout
@@ -54,9 +73,16 @@ const Navbar = () => {
           )}
 
           {/* عربة التسوق */}
-          <Link to="/" className="flex items-center gap-1">
-            <ShoppingCart size={24} />
-            <span>Cart</span>
+          <Link to="/cart" className="flex items-center gap-2">
+            <div className="relative">
+              <ShoppingCart size={28} />
+              {cartItemCount > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-yellow-400 text-black text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                  {cartItemCount}
+                </span>
+              )}
+            </div>
+            <span className="font-bold hidden md:block">Cart</span>
           </Link>
         </div>
       </div>

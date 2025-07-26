@@ -8,6 +8,7 @@ import Product from './pages/ProductPage.jsx';
 import SignUp from './pages/SignUp.jsx';
 import SignIn from './pages/SignIn.jsx';
 import AuthFooter from './components/Footer.jsx';
+import Cart from './pages/Cart.jsx';
 
 // Layout-like wrapper directly in App
 const AppLayout = () => (
@@ -27,6 +28,7 @@ const router = createBrowserRouter([
             { path: '/', element: <Home /> },
             { path: '/home', element: <Home /> },
             { path: '/product', element: <Product /> },
+            {path: '/cart', element: <Cart />},
         ],
     },
     {
