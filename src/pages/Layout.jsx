@@ -1,15 +1,15 @@
-import React from 'react';
-import Footer from '../components/Footer.jsx';
+import React from "react";
+import Footer from "../components/MainFooter.jsx";
+import Navbar from "../components/Navbar.jsx";
 
 const Layout = ({ children }) => {
-    return (
-        <div className="flex flex-col min-h-screen bg-white">
-            <main className="flex-grow">
-                {children}
-            </main>
-            <Footer />
-        </div>
-    );
+  return (
+    <div className="flex flex-col min-h-screen bg-white">
+      <Navbar /> {/* ✅ تمت إضافة النافبار هنا */}
+      <main className="flex-grow">{children}</main>
+      <Footer />
+    </div>
+  );
 };
 
 export default Layout;

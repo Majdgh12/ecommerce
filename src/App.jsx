@@ -1,46 +1,56 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { useAuth } from './context/AuthContext';
-import { FIREBASE_AUTH } from './firebase/config';
-import amazonLogo from './assets/Amazon.svg';
+import { createBrowserRouter, RouterProvider, Outlet } from 'react-router-dom';
 
-function App() {
-    const { currentUser } = useAuth();
+import Navbar from './components/Navbar.jsx';
+import Footer from './components/MainFooter.jsx';
+import Home from './pages/Home-page.jsx';
+import Product from './pages/ProductPage.jsx';
+import SignUp from './pages/SignUp.jsx';
+import SignIn from './pages/SignIn.jsx';
+import AuthFooter from './components/Footer.jsx';
 
-    return (
-        <div className="flex flex-col items-center justify-center min-h-screen p-8 text-center">
-            <img src={amazonLogo} alt="Amazon Logo" className="h-12 mb-8" />
+// Layout-like wrapper directly in App
+const AppLayout = () => (
+    <>
+        <Navbar />
+        <main className="min-h-screen">
+            <Outlet />
+        </main>
+        <Footer />
+    </>
+);
 
-            {currentUser ? (
-                <div>
-                    <h1 className="text-4xl font-bold">Welcome to Amazon</h1>
-                    <p className="mt-4 text-2xl">
-                        Hello, {currentUser.name || 'User'}!
-                    </p>
-                    <p className="text-gray-600">Your email is: {currentUser.email}</p>
+const router = createBrowserRouter([
+    {
+        element: <AppLayout />, // ✅ this replaces the need for Layout.jsx
+        children: [
+            { path: '/', element: <Home /> },
+            { path: '/home', element: <Home /> },
+            { path: '/product', element: <Product /> },
+        ],
+    },
+    {
+        path: '/signin',
+        element: (
+            <>
+                <SignIn />
+                <AuthFooter />
+            </>
+        ),
+    },
+    {
+        path: '/signup',
+        element: (
+            <>
+                <SignUp />
+                <AuthFooter />
+            </>
+        ),
+    },
+]);
 
-                    <button
-                        onClick={() => FIREBASE_AUTH.signOut()}
-                        className="mt-8 px-6 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
-                    >
-                        Sign Out
-                    </button>
-                </div>
-            ) : (
-                <div>
-                    <h1 className="text-4xl font-bold">You are not signed in.</h1>
-                    <div className="mt-8 space-x-4">
-                        <Link to="/signin" className="px-6 py-2 bg-amazon-yellow text-black rounded-lg hover:bg-[#f0c14b]">
-                            Sign In
-                        </Link>
-                        <Link to="/signup" className="px-6 py-2 bg-gray-200 text-black rounded-lg hover:bg-gray-300">
-                            Create Account
-                        </Link>
-                    </div>
-                </div>
-            )}
-        </div>
-    );
-}
+const App = () => {
+    return <RouterProvider router={router} />;
+};
 
 export default App;
