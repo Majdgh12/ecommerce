@@ -10,11 +10,12 @@ import App from './App.jsx';
 import Layout from "./pages/Layout.jsx";
 import SignUp from './pages/SignUp.jsx';
 import SignIn from './pages/SignIn.jsx';
+import ProductPage from './pages/ProductPage.jsx';
 
 const router = createBrowserRouter([
     {
         path: "/",
-        element: <App />, // HomePage
+        element: <ProductPage />, // HomePage
     },
     {
         path: "/signup",
