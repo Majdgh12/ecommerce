@@ -12,7 +12,7 @@ export default function ProductCard({ product }) {
   const { id, image, title, price, rating } = product;
 
   const handleAddToCart = (e) => {
-    e.stopPropagation(); 
+    e.stopPropagation();
     if (userInfo) {
       const itemToAdd = {
         id: id,
