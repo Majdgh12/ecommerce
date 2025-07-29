@@ -5,7 +5,7 @@ import arrowIcon from '../assets/arrow.svg';
 import rectangle from '../assets/Rectangle.svg';
 import {Link, useNavigate} from 'react-router-dom';
 import {FIREBASE_AUTH, FIREBASE_DB} from "../firebase/config.js";
-import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
 import { useDispatch } from 'react-redux';
 import { setUser, setLoading as setUserLoading, setError as setUserError } from '../redux/userSlice';
 
@@ -23,7 +23,19 @@ const SignUp = () => {
 
         if (!name || !mobile || !password) {
             alert('Please fill out all fields.');
-            setError('Please enter both email/mobile and password.');
+            setError('Please enter all fields.');
+            return;
+        }
+
+        if( mobile.length < 11) {
+            alert('Please enter a valid mobile number.');
+            setError('Please enter a valid mobile number. It should be 11 digits long.');
+            return;
+        }
+
+        if (password.length < 6) {
+            alert('Password must be at least 6 characters long.');
+            setError('Password must be at least 6 characters long.');
             return;
         }
 
@@ -32,6 +44,13 @@ const SignUp = () => {
         dispatch(setUserLoading());
 
         try {
+            const userDocRef = doc(FIREBASE_DB, "users", mobile);
+            const userDocSnap = await getDoc(userDocRef);
+            if (userDocSnap.exists()) {
+                setError('This mobile number is already in use. Please use a different number.');
+                setLoading(false);
+                return;
+            }
             const userCredential = await createUserWithEmailAndPassword(FIREBASE_AUTH, `${mobile}@test.com`, password);
             const user = userCredential.user;
             console.log('Successfully signed up with Auth:', user);
@@ -53,11 +72,14 @@ const SignUp = () => {
 
         } catch (error) {
             const errorCode = error.code;
-            const errorMessage = error.message;
-            dispatch(setUserError(errorMessage));
-            console.error("Firebase Error: ", errorCode, errorMessage);
-            alert(`Error: ${errorMessage}`);
-            setError(errorMessage);
+            if (errorCode === 'auth/email-already-in-use') {
+                setError('This mobile number is already in use. Please try a different one.');
+            } else {
+                setError(error.message);
+            }
+            dispatch(setUserError(error.message));
+            console.error("Firebase Error: ", errorCode, error.message);
+            alert(`Error: ${error.message}`);
         } finally {
             setLoading(false);
         }
