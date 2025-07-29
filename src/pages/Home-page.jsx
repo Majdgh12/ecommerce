@@ -26,10 +26,10 @@ const Home = () => {
       </div>
 
       <div className="px-4 ">
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <div className="bg-white shadow p-4 flex flex-col justify-between h-full min-h-[450px]">
             <div>
-              <h2 className="mb-4 text-lg font-bold">
+              <h2 className="text-lg font-bold mb-4">
                 Best Sellers in Toys & Games
               </h2>
               <div>
@@ -60,7 +60,7 @@ const Home = () => {
               className="bg-white shadow p-4 flex flex-col justify-between h-full min-h-[450px]"
             >
               <div>
-                <h2 className="mb-4 text-lg font-bold leading-snug">
+                <h2 className="font-bold text-lg mb-4 leading-snug">
                   {card.title}
                 </h2>
                 <div className="grid grid-cols-2 gap-3 min-h-[270px]">
@@ -69,9 +69,9 @@ const Home = () => {
                       <img
                         src={item.img}
                         alt={item.caption}
-                        className="object-cover w-full h-48"
+                        className="w-full h-48 object-cover"
                       />
-                      <p className="mt-1 text-sm">{item.caption}</p>
+                      <p className="text-sm mt-1">{item.caption}</p>
                     </div>
                   ))}
                 </div>
