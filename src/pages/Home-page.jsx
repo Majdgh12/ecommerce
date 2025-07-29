@@ -6,6 +6,8 @@ import pic3 from "../assets/Home/cards/pic3.png";
 import pic4 from "../assets/Home/cards/pic4.png";
 import ImageSlider from "../components/ImageSlider";
 import { images } from "../components/ImageSlider";
+import Navbar from "../components/Navbar";
+import MainFooter from "../components/MainFooter";
 
 const Home = () => {
   return (
@@ -41,7 +43,7 @@ const Home = () => {
             </div>
             <div className="grid grid-cols-4 gap-6 mt-4">
               {[pic1, pic2, pic3, pic4].map((img, i) => (
-                <div key={i} className="rounded border-2">
+                <div key={i} className="border-2 rounded">
                   <img
                     src={img}
                     alt={`Product ${i + 1}`}
@@ -95,7 +97,7 @@ const Home = () => {
       <section className="w-full bg-[#37475A] text-white text-center py-4  hover:bg-[#0C3353] transition-colors">
         <button
           onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-          className="text-lg font-semibold  px-6 py-2"
+          className="px-6 py-2 text-lg font-semibold"
         >
           Back to Top
         </button>
