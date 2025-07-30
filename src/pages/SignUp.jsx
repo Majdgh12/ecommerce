@@ -5,7 +5,7 @@ import arrowIcon from '../assets/arrow.svg';
 import rectangle from '../assets/Rectangle.svg';
 import {Link, useNavigate} from 'react-router-dom';
 import {FIREBASE_AUTH, FIREBASE_DB} from "../firebase/config.js";
-import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
+import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { useDispatch } from 'react-redux';
 import { setUser, setLoading as setUserLoading, setError as setUserError } from '../redux/userSlice';
 
@@ -44,27 +44,19 @@ const SignUp = () => {
         dispatch(setUserLoading());
 
         try {
-            const userDocRef = doc(FIREBASE_DB, "users", mobile);
-            const userDocSnap = await getDoc(userDocRef);
-            if (userDocSnap.exists()) {
-                setError('This mobile number is already in use. Please use a different number.');
-                setLoading(false);
-                return;
-            }
             const userCredential = await createUserWithEmailAndPassword(FIREBASE_AUTH, `${mobile}@test.com`, password);
             const user = userCredential.user;
-            console.log('Successfully signed up with Auth:', user);
+            console.log('Successfully created user in Auth:', user);
             const userData = {
                 uid: user.uid,
                 name: name,
                 mobile: mobile,
                 email: user.email,
-            }
+            };
             await setDoc(doc(FIREBASE_DB, "users", user.uid), {
                 ...userData,
                 createdAt: serverTimestamp(),
             });
-
             console.log('Successfully saved user data to Firestore.');
             dispatch(setUser(userData));
             alert('Sign up successful!');

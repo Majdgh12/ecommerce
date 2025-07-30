@@ -92,7 +92,7 @@ const Cart = () => {
                                         onChange={(e) => handleQuantityChange(item.id, e.target.value)}
                                         className="bg-gray-100 border border-gray-300 rounded-md shadow-sm p-2"
                                     >
-                                        {[...Array(20).keys()].map(n => (
+                                        {[...Array(10).keys()].map(n => (
                                             <option key={n + 1} value={n + 1}>Qty: {n + 1}</option>
                                         ))}
                                     </select>
